@@ -6,6 +6,12 @@
  -----------------------------------------------------------------------------
 
 
+ver 0.04 2002/07/28 by Ryuz(ryuz@users.sourceforge.jp)
+  パッケージに CvsSync.cfg を入れ忘れていた点を修正
+  CvsSync.cfg の拡張子設定が無かった場合のエラー処理を追加
+  その他細かいバグフィックス
+
+
 ver 0.03 2002/07/27 by Ryuz(ryuz@users.sourceforge.jp)
   nkf32.exe に渡すオプションを設定ファイルで指定できるように変更
   著作権表記を Project HOS に統一

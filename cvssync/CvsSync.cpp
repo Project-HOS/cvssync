@@ -178,6 +178,10 @@ BOOL File2To1(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 	TTimeStamp ts;
 
 	psv = s_avConfig.Get(_T("[NkfOption2]"));
+	if ( psv == NULL )
+	{
+		return FALSE;
+	}
 
 	if ( CheckTextFile(lpszFile2) )
 	{
@@ -235,6 +239,10 @@ BOOL CheckTextFile(LPCTSTR lpszFileName)
 	
 	// 設定ファイルの情報を読み出し
 	psv = s_avConfig.Get(_T("[TextFile]"));
+	if ( psv == NULL )
+	{
+		return FALSE;
+	}
 
 	// 指定拡張子と一致したらテキストとみなす
 	for ( i = 0; i < psv->GetCount(); i++ )
@@ -261,6 +269,10 @@ BOOL CheckBinaryFile(LPCTSTR lpszFileName)
 	
 	// 設定ファイルの情報を読み出し
 	psv = s_avConfig.Get(_T("[BinaryFile]"));
+	if ( psv == NULL )
+	{
+		return FALSE;
+	}
 
 	// 指定拡張子と一致したらバイナリとみなす
 	for ( i = 0; i < psv->GetCount(); i++ )

@@ -46,6 +46,8 @@ BOOL SetFileTimeStamp(LPCTSTR lpszFileName, const TTimeStamp* pTimeStamp)
 	BOOL   blReturn;
 
 	// OS のバージョン取得
+	memset(&oi, 0, sizeof(oi));
+	oi.dwOSVersionInfoSize = sizeof(oi);
 	GetVersionEx(&oi);
 	if ( oi.dwPlatformId == VER_PLATFORM_WIN32_NT )
 	{
