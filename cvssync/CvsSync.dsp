@@ -85,7 +85,19 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\AssociationVector.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\CvsSync.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ReadConfig.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\StringVector.cpp
 # End Source File
 # Begin Source File
 
@@ -101,6 +113,18 @@ SOURCE=.\TreeSearch.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=.\AssociationVector.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ReadConfig.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\StringVector.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\TimeStamp.h
 # End Source File
 # Begin Source File
@@ -108,6 +132,10 @@ SOURCE=.\TimeStamp.h
 SOURCE=.\TreeSearch.h
 # End Source File
 # End Group
+# Begin Source File
+
+SOURCE=.\log.txt
+# End Source File
 # Begin Source File
 
 SOURCE=.\readme.txt

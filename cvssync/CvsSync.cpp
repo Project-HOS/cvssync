@@ -1,6 +1,5 @@
 // ---------------------------------------------------------------------------
-//  CVS用 文字コード変換(EUC <-> SJIS)付きフォルダ同期ツール
-//    超いいかげんバージョン
+//  CVS用 文字コード変換(EUC <-> SJIS)付きフォルダ同期ツール Ver 0.02
 //
 //                                      Copyright (C) 2002 by Ryuji Fuchikami
 // ---------------------------------------------------------------------------
@@ -13,15 +12,21 @@
 #include <process.h>
 #include "TreeSearch.h"
 #include "TimeStamp.h"
+#include "ReadConfig.h"
 
 
 
 // ローカル関数
-BOOL FileProc(LPCTSTR lpszFile1, LPCTSTR lpszFile2, int iFlag);		// ファイル処理ルーチン
-BOOL File1To2(LPCTSTR lpszFile1, LPCTSTR lpszFile2);				// Tree1(EUC)からTree2(SJIS)へコピー処理
-BOOL File2To1(LPCTSTR lpszFile1, LPCTSTR lpszFile2);				// Tree2(SJIS)からTree1(EUC)へコピー処理
-BOOL CheckTextFile(LPCTSTR lpszFileName);							// テキストファイル判定
-BOOL CheckBinaryFile(LPCTSTR lpszFileName);							// バイナリファイル判定
+static void ReadCfgFile(LPCTSTR lpszExeFile);							// 設定読み込み
+static BOOL FileProc(LPCTSTR lpszFile1, LPCTSTR lpszFile2, int iFlag);	// ファイル処理ルーチン
+static BOOL File1To2(LPCTSTR lpszFile1, LPCTSTR lpszFile2);				// Tree1(EUC)からTree2(SJIS)へコピー処理
+static BOOL File2To1(LPCTSTR lpszFile1, LPCTSTR lpszFile2);				// Tree2(SJIS)からTree1(EUC)へコピー処理
+static BOOL CheckTextFile(LPCTSTR lpszFileName);						// テキストファイル判定
+static BOOL CheckBinaryFile(LPCTSTR lpszFileName);						// バイナリファイル判定
+
+
+// ローカル変数
+static CAssociationVector s_avConfig;
 
 
 
@@ -38,6 +43,9 @@ int main(int argc, char *argv[])
 		printf("usage: CvsSync.exe euc-path sjis-path\n");
 		return 1;
 	}
+
+	// 設定ファイル読み込み
+	ReadCfgFile(argv[0]);
 
 	// パスの後ろに '\' をつける
 	lstrcpy(szPath1, argv[1]);
@@ -56,6 +64,25 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+
+
+
+// 設定ファイル読み込み
+void ReadCfgFile(LPCTSTR lpszExeFile)
+{
+	TCHAR szCfgFile[_MAX_PATH];
+	TCHAR szDrive[_MAX_DRIVE];
+	TCHAR szDir[_MAX_DIR];
+	TCHAR szName[_MAX_FNAME];
+
+	// 実行ファイルの拡張子を変換
+	_tsplitpath(lpszExeFile, szDrive, szDir, szName, NULL);
+	_tmakepath(szCfgFile, szDrive, szDir, szName, _T(".cfg"));
+
+	// 設定ファイル読み出し
+	ReadConfig(szCfgFile, &s_avConfig);
+}
+
 
 
 // ファイル処理ルーチン
@@ -102,7 +129,7 @@ BOOL File1To2(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 	if ( CheckTextFile(lpszFile1) )
 	{
 		// テキストはnkfで変換
-		wsprintf(szCommand, "nkf32 -s -O \"%s\" \"%s\"", lpszFile1, lpszFile2);
+		wsprintf(szCommand, _T("nkf32 -E -s -c -O \"%s\" \"%s\""), lpszFile1, lpszFile2);
 		if ( _tsystem(szCommand) != 0 )
 		{
 			return FALSE;	// エラー発生
@@ -144,7 +171,7 @@ BOOL File2To1(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 	if ( CheckTextFile(lpszFile2) )
 	{
 		// テキストはnkfで変換
-		wsprintf(szCommand, "nkf32 -S -e -d -O \"%s\" \"%s\"", lpszFile2, lpszFile1);
+		wsprintf(szCommand, _T("nkf32 -S -e -d -O \"%s\" \"%s\""), lpszFile2, lpszFile1);
 		if ( _tsystem(szCommand) != 0 )
 		{
 			return FALSE;	// エラー発生
@@ -177,58 +204,15 @@ BOOL File2To1(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 }
 
 
-// テキストファイルの拡張子（手抜きの決め打ち）
-LPCTSTR lpszTextExt[] =
-{
-	_T(".c"),
-	_T(".cpp"),
-	_T(".h"),
-	_T(".s"),
-	_T(".asm"),
-	_T(".src"),
-	_T(".inc"),
-	_T(".cfg"),
-	_T(".x"),
-	_T(".sub"),
-	_T(".txt"),
-	_T(".log"),
-	_T(".mak"),
-	_T(".html"),
-	_T(".htm"),
-	_T(".cgi"),
-	_T(".pl"),
-	_T(".java"),
-	NULL
-};
-
-// バイナリファイルの拡張子（超手抜きパート２）
-LPCTSTR lpszBinExt[] =
-{
-	_T(".dsw"),
-	_T(".dsp"),
-	_T(".doc"),
-	_T(".xls"),
-	_T(".ppt"),
-	_T(".jpg"),
-	_T(".gif"),
-	_T(".png"),
-	_T(".pdf"),
-	NULL
-};
-
-// ここで思いつかない拡張子は多分コピーしたくない一時ファイルに違いない
-// というゴーマンな作りとなっております m(_ _)m
-// というか、拡張子ぐらい設定ファイル読めるようにしろってね (^^;;
-
-
-
 // テキストファイル判定
 BOOL CheckTextFile(LPCTSTR lpszFileName)
 {
+	CStringVector* psv;
 	TCHAR szName[_MAX_FNAME];
 	TCHAR szExt[_MAX_EXT];
 	int i;
-	
+
+	// パス名を分解
 	_tsplitpath(lpszFileName, NULL, NULL, szName, szExt);
 	
 	// 拡張子なしの makefile ならテキストと（勝手に）みなす
@@ -237,11 +221,14 @@ BOOL CheckTextFile(LPCTSTR lpszFileName)
 	{
 		return TRUE;
 	}
+	
+	// 設定ファイルの情報を読み出し
+	psv = s_avConfig.Get(_T("[TextFile]"));
 
-	// 登録拡張子と同じならそれもみんなテキストじゃー！
-	for ( i = 0; lpszTextExt[i] != NULL; i++ )
+	// 指定拡張子と一致したらテキストとみなす
+	for ( i = 0; i < psv->GetCount(); i++ )
 	{
-		if ( lstrcmpi(szExt, lpszTextExt[i]) == 0 )
+		if ( lstrcmpi(szExt, psv->Get(i)) == 0 )
 		{
 			return TRUE;
 		}
@@ -254,15 +241,20 @@ BOOL CheckTextFile(LPCTSTR lpszFileName)
 // バイナリファイル判定
 BOOL CheckBinaryFile(LPCTSTR lpszFileName)
 {
+	CStringVector* psv;
 	TCHAR szExt[_MAX_EXT];
 	int i;
 	
+	// パス名を分解
 	_tsplitpath(lpszFileName, NULL, NULL, NULL, szExt);
 	
-	// 登録拡張子と同じならバイナリ
-	for ( i = 0; lpszBinExt[i] != NULL; i++ )
+	// 設定ファイルの情報を読み出し
+	psv = s_avConfig.Get(_T("[BinaryFile]"));
+
+	// 指定拡張子と一致したらバイナリとみなす
+	for ( i = 0; i < psv->GetCount(); i++ )
 	{
-		if ( lstrcmpi(szExt, lpszBinExt[i]) == 0 )
+		if ( lstrcmpi(szExt, psv->Get(i)) == 0 )
 		{
 			return TRUE;
 		}
@@ -270,6 +262,7 @@ BOOL CheckBinaryFile(LPCTSTR lpszFileName)
 	
 	return FALSE;
 }
+
 
 
 // ---------------------------------------------------------------------------

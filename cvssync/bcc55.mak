@@ -1,6 +1,5 @@
 # ---------------------------------------------------------------------------
 #  CVS用 文字コード変換(EUC <-> SJIS)付きフォルダ同期ツール
-#    超いいかげんバージョン
 #  Borland-C Ver5.5 用 makefile
 #
 #                                      Copyright (C) 2002 by Ryuji Fuchikami
@@ -23,8 +22,11 @@ TARGET = CvsCync.exe
 
 # オブジェクトファイル
 OBJS = CvsSync.obj \
+       ReadConfig.obj \
        TimeStamp.obj \
-       TreeSearch.obj
+       TreeSearch.obj \
+       AssociationVector.obj \
+       StringVector.obj
 
 
 # ルールの宣言
