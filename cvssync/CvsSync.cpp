@@ -60,6 +60,16 @@ int main(int argc, char *argv[])
 		lstrcat(szPath2, _T("\\"));
 	}
 	
+	// ディレクトリ作成の暴挙に出る
+	if ( ::CreateDirectory(szPath1, NULL) )
+	{
+		printf("create directry \"%s\"\n", szPath1);
+	}
+	if ( ::CreateDirectory(szPath2, NULL) )
+	{
+		printf("create directry \"%s\"\n", szPath2);
+	}
+
 	// ツリー検索実行
 	tc.Search(szPath1, szPath2);
 
@@ -157,7 +167,7 @@ BOOL File1To2(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 		return TRUE;
 	}
 
-	printf("\"%s\" => \"%s\"\n", lpszFile1, lpszFile2);
+	printf("Update : %s\n", lpszFile2);
 
 	// タイムスタンプのコピー
 	GetFileTimeStamp(lpszFile1, &ts);
@@ -206,7 +216,7 @@ BOOL File2To1(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 		return TRUE;
 	}
 
-	printf("\"%s\" <= \"%s\"\n", lpszFile1, lpszFile2);
+	printf("Update : %s\n", lpszFile1);
 
 	// タイムスタンプのコピー
 	::GetFileTimeStamp(lpszFile2, &ts);

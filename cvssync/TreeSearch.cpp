@@ -64,7 +64,7 @@ BOOL CTreeSearch::Search(LPCTSTR lpszPath1, LPCTSTR lpszPath2)
 					if ( !CreateDirectory(szSubDirectry2, NULL) )
 					{
 						// 作成失敗
-						printf("fale : create directry \"%s\"\n", szSubDirectry2);
+						printf("fail : create directry \"%s\"\n", szSubDirectry2);
 					}
 					else
 					{
@@ -79,7 +79,7 @@ BOOL CTreeSearch::Search(LPCTSTR lpszPath1, LPCTSTR lpszPath2)
 					if ( !(pfdTmp->wfdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) )
 					{
 						// 同名のファイルがある
-						printf("fale : create directry \"%s\"\n", szSubDirectry2);
+						printf("fail : create directry \"%s\"\n", szSubDirectry2);
 					}
 					else
 					{
@@ -142,7 +142,7 @@ BOOL CTreeSearch::Search(LPCTSTR lpszPath1, LPCTSTR lpszPath2)
 					if ( !CreateDirectory(szSubDirectry1, NULL) )
 					{
 						// 作成失敗
-						printf("fale : create directry \"%s\"\n", szSubDirectry1);
+						printf("fail : create directry \"%s\"\n", szSubDirectry1);
 					}
 					else
 					{
