@@ -81,6 +81,10 @@ void ReadCfgFile(LPCTSTR lpszExeFile)
 
 	// 設定ファイル読み出し
 	ReadConfig(szCfgFile, &s_avConfig);
+
+	// デフォルトオプションを設定
+	s_avConfig.Add(_T("[NkfOption1]"), _T("-E -s"));	// EUCを想定してSJISに変換
+	s_avConfig.Add(_T("[NkfOption1]"), _T("-s -E"));	// SJISを想定してEUCに変換
 }
 
 
@@ -123,13 +127,16 @@ BOOL FileProc(LPCTSTR lpszFile1, LPCTSTR lpszFile2, int iFlag)
 // File1(EUC) を SJIS変換してFile2にコピー
 BOOL File1To2(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 {
+	CStringVector* psv;
 	TCHAR szCommand[MAX_PATH * 2];
 	TTimeStamp ts;
 
+	psv = s_avConfig.Get(_T("[NkfOption1]"));
+	
 	if ( CheckTextFile(lpszFile1) )
 	{
 		// テキストはnkfで変換
-		wsprintf(szCommand, _T("nkf32 -E -s -c -O \"%s\" \"%s\""), lpszFile1, lpszFile2);
+		wsprintf(szCommand, _T("nkf32 %s -O \"%s\" \"%s\""), psv->Get(0), lpszFile1, lpszFile2);
 		if ( _tsystem(szCommand) != 0 )
 		{
 			return FALSE;	// エラー発生
@@ -162,16 +169,19 @@ BOOL File1To2(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 }
 
 
-// File2(SJIS) を SJIS変換してFile1にコピー
+// File2(SJIS) を EUC変換してFile1にコピー
 BOOL File2To1(LPCTSTR lpszFile1, LPCTSTR lpszFile2)
 {
+	CStringVector* psv;
 	TCHAR szCommand[MAX_PATH * 2];
 	TTimeStamp ts;
+
+	psv = s_avConfig.Get(_T("[NkfOption2]"));
 
 	if ( CheckTextFile(lpszFile2) )
 	{
 		// テキストはnkfで変換
-		wsprintf(szCommand, _T("nkf32 -S -e -d -O \"%s\" \"%s\""), lpszFile2, lpszFile1);
+		wsprintf(szCommand, _T("nkf32 %s -O \"%s\" \"%s\""), psv->Get(0), lpszFile2, lpszFile1);
 		if ( _tsystem(szCommand) != 0 )
 		{
 			return FALSE;	// エラー発生
