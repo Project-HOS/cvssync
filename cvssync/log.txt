@@ -6,15 +6,16 @@
  -----------------------------------------------------------------------------
 
 
-ver 0.03 2002/07/27 by Ryuz
+ver 0.03 2002/07/27 by Ryuz(ryuz@users.sourceforge.jp)
   nkf32.exe に渡すオプションを設定ファイルで指定できるように変更
+  著作権表記を Project HOS に統一
 
 
-Ver 0.02 2002/07/12 by Ryuz
+Ver 0.02 2002/07/12 by Ryuz(ryuz@users.sourceforge.jp)
   テキスト、バイナリ判定の拡張子指定を設定ファイルから読み込めるように変更
 
 
-Ver 0.01 2002/07/10 by Ryuz
+Ver 0.01 2002/07/10 by Ryuz(ryuz@users.sourceforge.jp)
   初版リリース。
   拡張子判定などすべて固定、とりあえず動くものとしてリリース
 
