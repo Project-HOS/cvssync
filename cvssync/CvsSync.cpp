@@ -191,6 +191,7 @@ LPCTSTR lpszTextExt[] =
 	_T(".x"),
 	_T(".sub"),
 	_T(".txt"),
+	_T(".log"),
 	_T(".mak"),
 	_T(".html"),
 	_T(".htm"),
